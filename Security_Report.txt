@@ -1,0 +1,62 @@
+===== SECURITY REPORT =====
+
+Total Login Attempts : 28
+Failed Login Attempts : 21
+Successful Login Attempts : 7
+
+====Failed Login By User :=====
+
+User : admin | Failed Attempts : 6
+User : root | Failed Attempts : 2
+User : guest | Failed Attempts : 6
+User : test | Failed Attempts : 2
+User : backup | Failed Attempts : 4
+User : student | Failed Attempts : 1
+
+User with Highest Failed Attempts : admin | Failed Attempts : 6
+
+====Failed Login By IP :=====
+IP : 192.168.1.10 | Failed Attempts : 6
+IP : 10.0.0.5 | Failed Attempts : 2
+IP : 172.16.1.25 | Failed Attempts : 6
+IP : 192.168.1.50 | Failed Attempts : 2
+IP : 172.20.10.8 | Failed Attempts : 4
+IP : 192.168.100.25 | Failed Attempts : 1
+
+ Most Suspicious IP : 192.168.1.10 | Failed Attempts : 6
+
+===== ALERTS =====
+
+Potential Brute Force : YES
+Severity              : HIGH
+===== SECURITY REPORT =====
+
+Total Login Attempts : 28
+Failed Login Attempts : 21
+Successful Login Attempts : 7
+
+====Failed Login By User :=====
+
+User : admin | Failed Attempts : 6
+User : root | Failed Attempts : 2
+User : guest | Failed Attempts : 6
+User : test | Failed Attempts : 2
+User : backup | Failed Attempts : 4
+User : student | Failed Attempts : 1
+
+User with Highest Failed Attempts : admin | Failed Attempts : 6
+
+====Failed Login By IP :=====
+IP : 192.168.1.10 | Failed Attempts : 6
+IP : 10.0.0.5 | Failed Attempts : 2
+IP : 172.16.1.25 | Failed Attempts : 6
+IP : 192.168.1.50 | Failed Attempts : 2
+IP : 172.20.10.8 | Failed Attempts : 4
+IP : 192.168.100.25 | Failed Attempts : 1
+
+ Most Suspicious IP : 192.168.1.10 | Failed Attempts : 6
+
+===== ALERTS =====
+
+Potential Brute Force : YES
+Severity              : HIGH
