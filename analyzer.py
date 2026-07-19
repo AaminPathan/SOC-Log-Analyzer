@@ -1,3 +1,25 @@
+import hashlib
+import json
+import os
+def calculate_file_hash(file_path):
+    with open(file_path, "rb") as file:
+        file_content = file.read()
+    file_hash = hashlib.sha256(file_content)
+    return file_hash.hexdigest()
+
+log_file = "logs/logs.txt"
+current_hash = calculate_file_hash(log_file)
+
+if os.path.exists("analysis_metadata.json"):
+    with open("analysis_metadata.json", "r") as file:
+        metadata = json.load(file)
+
+    previous_hash = metadata["last_analyzed_hash"]
+
+    if current_hash == previous_hash:
+        print("Same log file already analyzed. Skipping analysis.")
+        exit()
+
 report_file = open("Security_Report.txt", "w")
 failed_count = 0
 successful_count = 0
@@ -66,4 +88,9 @@ else:
     log_report("Alert                 : No Brute Force Detected")
 
 report_file.close()
+metadata = {
+    "last_analyzed_hash": current_hash
+}
+with open("analysis_metadata.json", "w") as file:
+    json.dump(metadata, file, indent=4)
 
