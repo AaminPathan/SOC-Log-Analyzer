@@ -1,0 +1,70 @@
+{
+    "summary": {
+        "total_login_attempts": 28,
+        "failed_login_attempts": 19,
+        "successful_login_attempts": 9,
+        "malformed_log_entries": 3
+    },
+    "failed_logins_by_user": {
+        "admin": 6,
+        "alice": 1,
+        "bob": 1,
+        "charlie": 1,
+        "david": 1,
+        "eve": 1,
+        "finance": 2,
+        "test": 2,
+        "backup": 3,
+        "root": 1
+    },
+    "failed_logins_by_ip": {
+        "203.0.113.5": 6,
+        "198.51.100.25": 5,
+        "203.0.113.80": 2,
+        "10.10.10.15": 2,
+        "172.16.0.8": 3,
+        "": 1
+    },
+    "highest_failed_user": {
+        "username": "admin",
+        "failed_attempts": 6
+    },
+    "most_suspicious_ip": {
+        "ip": "203.0.113.5",
+        "failed_attempts": 6
+    },
+    "detections": {
+        "brute_force": {
+            "detected": true,
+            "alerts": [
+                {
+                    "ip": "203.0.113.5",
+                    "attempts": 6,
+                    "time_window_seconds": 60
+                },
+                {
+                    "ip": "198.51.100.25",
+                    "attempts": 5,
+                    "time_window_seconds": 60
+                }
+            ]
+        },
+        "password_spraying": {
+            "detected": true,
+            "alerts": [
+                {
+                    "ip": "198.51.100.25",
+                    "unique_users": [
+                        "david",
+                        "charlie",
+                        "eve",
+                        "alice",
+                        "bob"
+                    ],
+                    "user_count": 5,
+                    "time_window_seconds": 300
+                }
+            ]
+        }
+    }
+}

@@ -1,33 +1,41 @@
 ===== SECURITY REPORT =====
 
-Total Login Attempts : 29
-Failed Login Attempts : 22
-Successful Login Attempts : 7
+Total Login Attempts : 28
+Failed Login Attempts : 19
+Successful Login Attempts : 9
+Malformed Log Entries : 3
 
-====Failed Login By User :=====
+==== FAILED LOGIN BY USER ====
 
 User : admin | Failed Attempts : 6
-User : root | Failed Attempts : 2
-User : guest | Failed Attempts : 6
+User : alice | Failed Attempts : 1
+User : bob | Failed Attempts : 1
+User : charlie | Failed Attempts : 1
+User : david | Failed Attempts : 1
+User : eve | Failed Attempts : 1
+User : finance | Failed Attempts : 2
 User : test | Failed Attempts : 2
-User : backup | Failed Attempts : 4
-User : student | Failed Attempts : 1
-User : amin | Failed Attempts : 1
+User : backup | Failed Attempts : 3
+User : root | Failed Attempts : 1
 
 User with Highest Failed Attempts : admin | Failed Attempts : 6
 
-====Failed Login By IP :=====
-IP : 192.168.1.10 | Failed Attempts : 6
-IP : 10.0.0.5 | Failed Attempts : 2
-IP : 172.16.1.25 | Failed Attempts : 6
-IP : 192.168.1.50 | Failed Attempts : 2
-IP : 172.20.10.8 | Failed Attempts : 4
-IP : 192.168.100.25 | Failed Attempts : 1
-IP : 192.168.204.130 | Failed Attempts : 1
+===== FAILED LOGIN BY IP =====
 
- Most Suspicious IP : 192.168.1.10 | Failed Attempts : 6
+IP : 203.0.113.5 | Failed Attempts : 6
+IP : 198.51.100.25 | Failed Attempts : 5
+IP : 203.0.113.80 | Failed Attempts : 2
+IP : 10.10.10.15 | Failed Attempts : 2
+IP : 172.16.0.8 | Failed Attempts : 3
+IP :  | Failed Attempts : 1
+
+Most Suspicious IP : 203.0.113.5 | Failed Attempts : 6
 
 ===== ALERTS =====
 
 Potential Brute Force : YES
-Severity              : HIGH
+IP : 203.0.113.5 | Attempts : 6 | Window : 60 seconds
+IP : 198.51.100.25 | Attempts : 5 | Window : 60 seconds
+
+Potential Password Spraying : YES
+IP : 198.51.100.25 | Unique Users : 5

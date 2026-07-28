@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SOC Log Analyzer - Enterprise Security Operations Center & Threat Detection Platform">
+    <title>SOC Log Analyzer | Enterprise Security Operations Center</title>
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Elite SOC Dashboard Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dark-soc-theme">
+    <div class="soc-layout" id="soc-layout">
+        
+        <!-- LEFT SIDEBAR -->
+        <aside class="soc-sidebar" id="soc-sidebar">
+            <div class="sidebar-header">
+                <div class="soc-logo-box">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <circle cx="12" cy="11" r="3"/>
+                    </svg>
+                </div>
+                <div class="sidebar-brand-text">
+                    <span class="brand-title">SOC FALCON</span>
+                    <span class="brand-sub">ENTERPRISE SEC</span>
+                </div>
+                <button type="button" class="btn-icon-collapse" id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">PLATFORM</div>
+                <a href="#dashboard" class="nav-item active" onclick="switchNavTab('dashboard')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="#input-section" class="nav-item" onclick="switchNavTab('analysis')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <span class="nav-label">Log Intake</span>
+                </a>
+                <a href="#detections-section" class="nav-item" onclick="switchNavTab('threats')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <span class="nav-label">Threat Detections</span>
+                    <span class="nav-badge" id="sidebar-alert-count">0</span>
+                </a>
+                <a href="#ip-grid-section" class="nav-item" onclick="switchNavTab('investigations')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span class="nav-label">IP Investigations</span>
+                </a>
+
+                <div class="nav-section-title">INTELLIGENCE</div>
+                <a href="#inspection-section" class="nav-item" onclick="switchNavTab('reports')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span class="nav-label">Security Reports</span>
+                </a>
+                <a href="#timeline-section" class="nav-item" onclick="switchNavTab('timeline')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span class="nav-label">Audit Timeline</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="analyst-info">
+                    <div class="avatar-box">SA</div>
+                    <div class="analyst-details">
+                        <span class="analyst-name">SOC Lead</span>
+                        <span class="analyst-role">Tier-3 Analyst</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN SHELL CONTAINER -->
+        <div class="soc-main-shell">
+            
+            <!-- TOP NAVIGATION BAR -->
+            <header class="soc-topnav">
+                <div class="topnav-left">
+                    <button type="button" class="btn-sidebar-mobile" onclick="toggleSidebar()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    </button>
+                    <div class="global-search-box">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="global-search-input" placeholder="Search IP addresses, usernames, threat alerts..." onkeyup="handleGlobalSearch(event)">
+                    </div>
+                </div>
+
+                <div class="topnav-right">
+                    <!-- Status Indicator -->
+                    <div class="soc-status-badge status-ready" id="topnav-status">
+                        <span class="pulse-dot"></span>
+                        <span id="topnav-status-text">ANALYZER READY</span>
+                    </div>
+
+                    <!-- Threat Score Pill -->
+                    <div class="threat-pill threat-pill-normal" id="topnav-threat-pill">
+                        <span class="pill-label">THREAT LEVEL:</span>
+                        <span class="pill-val" id="topnav-threat-val">NORMAL</span>
+                    </div>
+
+                    <!-- Notifications Icon -->
+                    <button type="button" class="topnav-icon-btn" title="Threat Notifications">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        <span class="notification-dot" id="notif-dot" style="display: none;"></span>
+                    </button>
+
+                    <!-- User Profile -->
+                    <div class="soc-profile-pill">
+                        <span class="profile-status-dot"></span>
+                        <span class="profile-name">Analyst_Console</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- MAIN WORKSPACE CONTENT -->
+            <main class="soc-content-area">
+                <div class="workspace-grid">
+                    
+                    <!-- LEFT/CENTER DASHBOARD CANVAS -->
+                    <div class="dashboard-canvas">
+                        
+                        <!-- HERO SECTION -->
+                        <section class="soc-hero-card">
+                            <div class="hero-content">
+                                <div class="hero-title-box">
+                                    <div class="hero-badge">ENTERPRISE EDITION</div>
+                                    <h1 class="hero-title">SOC Log Analyzer</h1>
+                                    <p class="hero-subtitle">Security Log Analysis & Automated Threat Detection Platform</p>
+                                </div>
+                                <div class="hero-meta-bar">
+                                    <div class="meta-item">
+                                        <span class="meta-label">ENGINE STATUS</span>
+                                        <span class="meta-val text-success" id="hero-engine-status">ONLINE</span>
+                                    </div>
+                                    <div class="meta-divider"></div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">DETECTION THRESHOLD</span>
+                                        <span class="meta-val">5 FAILS / 60s</span>
+                                    </div>
+                                    <div class="meta-divider"></div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">LAST ANALYSIS</span>
+                                        <span class="meta-val" id="hero-last-time">Never</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- INPUT / INGESTION PANEL -->
+                        <section class="soc-card input-vault-card" id="input-section">
+                            <div class="soc-card-header">
+                                <div class="tab-pill-group">
+                                    <button type="button" class="tab-pill active" id="tab-btn-paste" onclick="switchInputTab('paste')">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                                        Paste Log Stream
+                                    </button>
+                                    <button type="button" class="tab-pill" id="tab-btn-file" onclick="switchInputTab('file')">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Upload File Artifact
+                                    </button>
+                                </div>
+                                <div class="header-actions">
+                                    <button type="button" class="btn-action-ghost" onclick="loadSampleLogs()">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg>
+                                        Load Sample Logs
+                                    </button>
+                                    <button type="button" class="btn-action-ghost text-danger" onclick="clearInput()">Clear</button>
+                                </div>
+                            </div>
+
+                            <!-- Paste Panel -->
+                            <div class="input-pane active" id="pane-paste">
+                                <textarea id="log-text-input" class="soc-textarea" spellcheck="false" placeholder="Paste authentication logs here...&#10;&#10;Expected Format Example:&#10;2026-07-07 09:32:50 Failed User:admin IP:192.168.1.10&#10;2026-07-07 09:33:15 Success User:developer IP:192.168.1.15"></textarea>
+                            </div>
+
+                            <!-- Upload Panel -->
+                            <div class="input-pane" id="pane-file" style="display: none;">
+                                <div class="soc-drop-vault" id="drop-zone" onclick="triggerFileInput()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                                    <input type="file" id="file-input" accept=".txt,.log,.dat" style="display: none;" onchange="handleFileSelected(event)">
+                                    <div class="vault-icon">
+                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
+                                    </div>
+                                    <p class="vault-text">Drag & drop log evidence file here or <span class="accent-link">browse system</span></p>
+                                    <p class="vault-subtext">Supports plaintext authentication logs (.txt, .log)</p>
+                                    
+                                    <div class="vault-file-banner" id="file-banner" style="display: none;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                                        <div class="banner-text">
+                                            <span class="banner-filename" id="banner-filename">logs.txt</span>
+                                            <span class="banner-filesize" id="banner-filesize">0 KB</span>
+                                        </div>
+                                        <button type="button" class="btn-remove" onclick="removeSelectedFile(event)">✕</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="input-footer">
+                                <div class="error-toast" id="error-toast" style="display: none;" role="alert">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                    <span id="error-toast-msg">Error details.</span>
+                                </div>
+                                <button type="button" class="btn-soc-primary" id="btn-analyze" onclick="runAnalysis()">
+                                    <span class="spinner-dot" id="btn-spinner" style="display: none;"></span>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    <span id="btn-analyze-text">ANALYZE LOGS</span>
+                                </button>
+                            </div>
+                        </section>
+
+                        <!-- EMPTY STATE -->
+                        <section class="soc-card empty-dashboard" id="empty-state">
+                            <div class="empty-icon-ring">
+                                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><path d="M12 7v4"/><circle cx="12" cy="13" r="0.5"/></svg>
+                            </div>
+                            <h2 class="empty-title">Security Operations Center Standby</h2>
+                            <p class="empty-desc">Ingest a log stream or upload an authentication file to run threat detection algorithms and populate dashboard analytics.</p>
+                        </section>
+
+                        <!-- RESULTS DASHBOARD CONTAINER -->
+                        <div id="results-dashboard" style="display: none;">
+                            
+                            <!-- SUMMARY METRIC CARDS -->
+                            <section class="soc-metrics-grid">
+                                <div class="soc-card metric-card">
+                                    <div class="metric-head">
+                                        <span class="metric-label">TOTAL LOGIN ATTEMPTS</span>
+                                        <div class="metric-icon icon-blue">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="metric-value" id="stat-total">0</div>
+                                    <div class="metric-foot text-muted">Ingested events</div>
+                                </div>
+
+                                <div class="soc-card metric-card metric-danger">
+                                    <div class="metric-head">
+                                        <span class="metric-label">FAILED ATTEMPTS</span>
+                                        <div class="metric-icon icon-red">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="metric-value text-danger" id="stat-failed">0</div>
+                                    <div class="metric-foot text-danger" id="stat-failed-pct">0% failure rate</div>
+                                </div>
+
+                                <div class="soc-card metric-card metric-success">
+                                    <div class="metric-head">
+                                        <span class="metric-label">SUCCESSFUL ATTEMPTS</span>
+                                        <div class="metric-icon icon-green">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="metric-value text-success" id="stat-success">0</div>
+                                    <div class="metric-foot text-success" id="stat-success-pct">0% success rate</div>
+                                </div>
+
+                                <div class="soc-card metric-card">
+                                    <div class="metric-head">
+                                        <span class="metric-label">MALFORMED ENTRIES</span>
+                                        <div class="metric-icon icon-amber">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="metric-value text-amber" id="stat-malformed">0</div>
+                                    <div class="metric-foot text-muted">Corrupt or invalid lines</div>
+                                </div>
+                            </section>
+
+                            <!-- THREAT OVERVIEW TIMELINE / SUMMARY BAR -->
+                            <section class="soc-card overview-card">
+                                <div class="soc-card-title-bar">
+                                    <h3 class="soc-card-title">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                        Threat Velocity & Distribution
+                                    </h3>
+                                    <div class="overview-legend">
+                                        <span class="legend-item"><span class="dot dot-red"></span> Failed</span>
+                                        <span class="legend-item"><span class="dot dot-green"></span> Success</span>
+                                        <span class="legend-item"><span class="dot dot-amber"></span> Malformed</span>
+                                    </div>
+                                </div>
+                                <div class="distribution-bar-wrapper">
+                                    <div class="dist-bar" id="dist-bar-failed" style="width: 0%;"></div>
+                                    <div class="dist-bar dist-green" id="dist-bar-success" style="width: 0%;"></div>
+                                    <div class="dist-bar dist-amber" id="dist-bar-malformed" style="width: 0%;"></div>
+                                </div>
+                            </section>
+
+                            <!-- DETECTIONS SECTION -->
+                            <section class="detections-container" id="detections-section">
+                                <div class="section-header">
+                                    <h2 class="section-title">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                        Active Threat Detections
+                                    </h2>
+                                </div>
+
+                                <div class="alerts-grid">
+                                    <!-- Brute Force Card -->
+                                    <div class="soc-card alert-card" id="alert-card-brute">
+                                        <div class="alert-card-head">
+                                            <div class="alert-title-box">
+                                                <div class="alert-icon-ring" id="brute-ring">
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                                </div>
+                                                <div>
+                                                    <h3 class="alert-title">Brute Force Attack Detector</h3>
+                                                    <p class="alert-sub">>= 5 failed attempts from single IP within 60 seconds</p>
+                                                </div>
+                                            </div>
+                                            <span class="status-pill" id="brute-status-pill">CLEAR</span>
+                                        </div>
+                                        <div class="alert-card-body" id="brute-card-body">
+                                            <!-- Dynamic alerts -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Password Spraying Card -->
+                                    <div class="soc-card alert-card" id="alert-card-spray">
+                                        <div class="alert-card-head">
+                                            <div class="alert-title-box">
+                                                <div class="alert-icon-ring" id="spray-ring">
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                                </div>
+                                                <div>
+                                                    <h3 class="alert-title">Password Spraying Detector</h3>
+                                                    <p class="alert-sub">>= 3 unique usernames targeted from single IP within 300s</p>
+                                                </div>
+                                            </div>
+                                            <span class="status-pill" id="spray-status-pill">CLEAR</span>
+                                        </div>
+                                        <div class="alert-card-body" id="spray-card-body">
+                                            <!-- Dynamic alerts -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- FAILED LOGIN ANALYSIS CHARTS -->
+                            <section class="charts-grid">
+                                <div class="soc-card chart-card">
+                                    <div class="soc-card-title-bar">
+                                        <h3 class="soc-card-title">Failed Logins by User</h3>
+                                    </div>
+                                    <div class="bar-chart-container" id="chart-user-bars">
+                                        <!-- Rendered dynamically -->
+                                    </div>
+                                </div>
+
+                                <div class="soc-card chart-card">
+                                    <div class="soc-card-title-bar">
+                                        <h3 class="soc-card-title">Failed Logins by IP Address</h3>
+                                    </div>
+                                    <div class="bar-chart-container" id="chart-ip-bars">
+                                        <!-- Rendered dynamically -->
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- SUSPICIOUS IPS ENTERPRISE DATA GRID -->
+                            <section class="soc-card grid-card" id="ip-grid-section">
+                                <div class="soc-card-title-bar">
+                                    <div class="grid-title-box">
+                                        <h3 class="soc-card-title">Suspicious IP Intelligence Grid</h3>
+                                        <span class="grid-count-badge" id="ip-grid-count">0 IPs</span>
+                                    </div>
+                                    <div class="grid-search-box">
+                                        <input type="text" id="ip-search" placeholder="Filter IPs..." onkeyup="filterIpGrid()">
+                                    </div>
+                                </div>
+
+                                <div class="table-scroll-container">
+                                    <table class="soc-table" id="table-suspicious-ips">
+                                        <thead>
+                                            <tr>
+                                                <th>IP ADDRESS</th>
+                                                <th>FAILED ATTEMPTS</th>
+                                                <th>RISK SCORE</th>
+                                                <th>GEO LOCATION</th>
+                                                <th>STATUS</th>
+                                                <th>LAST SEEN</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody-suspicious-ips">
+                                            <!-- Dynamic rows -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+
+                            <!-- TARGETED USER ANALYSIS DATA GRID -->
+                            <section class="soc-card grid-card">
+                                <div class="soc-card-title-bar">
+                                    <div class="grid-title-box">
+                                        <h3 class="soc-card-title">Targeted User Accounts</h3>
+                                        <span class="grid-count-badge" id="user-grid-count">0 Users</span>
+                                    </div>
+                                </div>
+
+                                <div class="table-scroll-container">
+                                    <table class="soc-table" id="table-targeted-users">
+                                        <thead>
+                                            <tr>
+                                                <th>USERNAME</th>
+                                                <th>FAILED ATTEMPTS</th>
+                                                <th>RISK EVALUATION</th>
+                                                <th>STATUS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody-targeted-users">
+                                            <!-- Dynamic rows -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+
+                            <!-- ACTIVITY TIMELINE -->
+                            <section class="soc-card timeline-card" id="timeline-section">
+                                <div class="soc-card-title-bar">
+                                    <h3 class="soc-card-title">Audit & Execution Timeline</h3>
+                                </div>
+                                <div class="timeline-stepper" id="timeline-container">
+                                    <!-- Dynamic timeline steps -->
+                                </div>
+                            </section>
+
+                            <!-- INSPECTION PANEL & REPORT DOWNLOADS -->
+                            <section class="soc-card inspection-card" id="inspection-section">
+                                <div class="soc-card-title-bar">
+                                    <h3 class="soc-card-title">Inspection & Evidence Download</h3>
+                                    <div class="action-btn-group">
+                                        <button type="button" class="btn-action-secondary" onclick="copyJsonToClipboard()">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                            Copy JSON
+                                        </button>
+                                        <a href="/api/download/json" class="btn-action-secondary">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                            Download JSON
+                                        </a>
+                                        <a href="/api/download/report" class="btn-action-accent">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                            Download Security_Report.txt
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="inspection-subtabs">
+                                    <button type="button" class="subtab active" id="subtab-btn-json" onclick="switchInspectionSubtab('json')">Structured JSON Results</button>
+                                    <button type="button" class="subtab" id="subtab-btn-report" onclick="switchInspectionSubtab('report')">Security_Report.txt Preview</button>
+                                </div>
+
+                                <div class="code-container">
+                                    <pre id="json-code-block" class="code-view"><code>// Results will appear here after log analysis...</code></pre>
+                                    <pre id="report-code-block" class="code-view" style="display: none;"><code>// Security report will appear here...</code></pre>
+                                </div>
+                            </section>
+
+                        </div>
+                    </div>
+
+                    <!-- RIGHT SIDEBAR (LIVE THREAT WIDGETS) -->
+                    <aside class="soc-right-widgets">
+                        
+                        <!-- Threat Score Gauge Widget -->
+                        <div class="soc-card widget-card">
+                            <h4 class="widget-title">GLOBAL THREAT SCORE</h4>
+                            <div class="gauge-wrapper">
+                                <div class="gauge-ring-bg">
+                                    <div class="gauge-ring-fill" id="gauge-fill" style="transform: rotate(0deg);"></div>
+                                    <div class="gauge-center">
+                                        <span class="gauge-num" id="gauge-num">0</span>
+                                        <span class="gauge-max">/ 100</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="gauge-status-label" id="gauge-status-label">SYSTEM CLEAN</div>
+                        </div>
+
+                        <!-- Top Threat Vector Widget -->
+                        <div class="soc-card widget-card">
+                            <h4 class="widget-title">TOP THREAT VECTORS</h4>
+                            <div class="widget-meta-list">
+                                <div class="widget-meta-item">
+                                    <span class="meta-item-label">MOST SUSPICIOUS IP</span>
+                                    <span class="meta-item-val font-mono text-danger" id="widget-top-ip">None</span>
+                                </div>
+                                <div class="widget-meta-item">
+                                    <span class="meta-item-label">MOST TARGETED USER</span>
+                                    <span class="meta-item-val font-mono text-amber" id="widget-top-user">None</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Health Widget -->
+                        <div class="soc-card widget-card">
+                            <h4 class="widget-title">SYSTEM HEALTH & AGENTS</h4>
+                            <div class="health-list">
+                                <div class="health-row">
+                                    <span>Parser Engine</span>
+                                    <span class="health-tag tag-green">OPERATIONAL</span>
+                                </div>
+                                <div class="health-row">
+                                    <span>Brute-Force Rule</span>
+                                    <span class="health-tag tag-green">ACTIVE</span>
+                                </div>
+                                <div class="health-row">
+                                    <span>Spray Rule</span>
+                                    <span class="health-tag tag-green">ACTIVE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </aside>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
